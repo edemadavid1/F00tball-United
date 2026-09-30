@@ -1,0 +1,258 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Accounts",
+      "description": "Authenticated user accounts with Role-Based Access Control and Admin Approval status",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { 
+          "type": "string",
+          "enum": ["admin", "org_admin", "coach", "viewer", "parent", "user"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "approved", "rejected"]
+        },
+        "orgId": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role", "status"]
+    },
+    "players": {
+      "title": "Players",
+      "description": "Safeguarded youth player roster records with attendance and consent status",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "nickname": { "type": "string" },
+        "team": { "type": "string" },
+        "dob": { "type": "string" },
+        "emergencyContact": { "type": "string" },
+        "consentGiven": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "matches": {
+      "title": "Matches",
+      "description": "League and tournament match fixtures with scores, scorers, attendance, and rosters",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "title": { "type": "string" },
+        "tournament_id": { "type": "string" },
+        "round_number": { "type": "number" },
+        "round_name": { "type": "string" },
+        "home_team_id": { "type": "string" },
+        "away_team_id": { "type": "string" },
+        "home_team": { "type": "string" },
+        "away_team": { "type": "string" },
+        "home_score": { "type": "number" },
+        "away_score": { "type": "number" },
+        "winner_id": { "type": "string" },
+        "winner_team": { "type": "string" },
+        "status": { "type": "string" },
+        "scorers": { "type": "array" },
+        "potd_winners": { "type": "array" },
+        "attendance": { "type": "object" },
+        "player_teams": { "type": "object" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "sessions": {
+      "title": "Sessions",
+      "description": "Training and coaching sessions with attendance tracking logs",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "location": { "type": "string" },
+        "lead_trainer": { "type": "string" },
+        "notes": { "type": "string" },
+        "status": { "type": "string" },
+        "attendance": { "type": "object" },
+        "attendees": { "type": "array" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["date", "type"]
+    },
+    "teams": {
+      "title": "Teams",
+      "description": "Registered teams in the league",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "captain_id": { "type": "string" },
+        "player_ids": { "type": "array" }
+      },
+      "required": ["name"]
+    },
+    "tournaments": {
+      "title": "Tournaments",
+      "description": "Tournament bracket structures and schedules",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Global league configuration, points, and rules",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "format": { "type": "string" },
+        "match_type": { "type": "string" }
+      }
+    },
+    "recurring_schedules": {
+      "title": "Recurring Schedules",
+      "description": "Recurring training schedules and timetables",
+      "type": "object",
+      "properties": {
+        "dayOfWeek": { "type": "string" },
+        "time": { "type": "string" },
+        "sessionType": { "type": "string" }
+      }
+    },
+    "attendance": {
+      "title": "Attendance",
+      "description": "Historical attendance records for reporting",
+      "type": "object",
+      "properties": {
+        "sessionId": { "type": "string" },
+        "playerId": { "type": "string" },
+        "status": { "type": "string" },
+        "date": { "type": "string" }
+      }
+    },
+    "consent_forms": {
+      "title": "Consent Forms",
+      "description": "Parent and guardian digital safeguarding consent forms",
+      "type": "object",
+      "properties": {
+        "childName": { "type": "string" },
+        "parentName": { "type": "string" },
+        "parentEmail": { "type": "string" },
+        "emergencyPhone": { "type": "string" },
+        "submittedByUid": { "type": "string" },
+        "medicalConsent": { "type": "boolean" },
+        "photoConsent": { "type": "boolean" },
+        "signedAt": { "type": "string" }
+      },
+      "required": ["childName", "parentName", "submittedByUid", "parentEmail"]
+    },
+    "app_settings": {
+      "title": "App Settings",
+      "description": "System branding and global configuration items",
+      "type": "object",
+      "properties": {
+        "officialAppLogo": { "type": "string" },
+        "updatedBy": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "mail": {
+      "title": "Mail Dispatch Queue",
+      "description": "Trigger Email from Firestore Extension and automated alert queue",
+      "type": "object",
+      "properties": {
+        "to": { "type": "array" },
+        "message": { "type": "object" },
+        "metadata": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["to", "message"]
+    },
+    "test": {
+      "title": "Connection Test",
+      "description": "Heartbeat and health check document for connection verification",
+      "type": "object",
+      "properties": {
+        "status": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/test/{docId}": {
+      "schema": "test",
+      "description": "Connection test document for health checks"
+    },
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "User profiles and RBAC assignment"
+    },
+    "/players/{playerId}": {
+      "schema": "players",
+      "description": "Safeguarded youth player collection"
+    },
+    "/go_players_prod/{playerId}": {
+      "schema": "players",
+      "description": "Production player records"
+    },
+    "/matches/{matchId}": {
+      "schema": "matches",
+      "description": "Match fixtures and scoring"
+    },
+    "/go_matches_prod/{matchId}": {
+      "schema": "matches",
+      "description": "Production match fixtures"
+    },
+    "/sessions/{sessionId}": {
+      "schema": "sessions",
+      "description": "Training and coaching sessions"
+    },
+    "/go_sessions_prod/{sessionId}": {
+      "schema": "sessions",
+      "description": "Production session records"
+    },
+    "/teams/{teamId}": {
+      "schema": "teams",
+      "description": "League teams"
+    },
+    "/go_teams_prod/{teamId}": {
+      "schema": "teams",
+      "description": "Production league teams"
+    },
+    "/tournaments/{tournamentId}": {
+      "schema": "tournaments",
+      "description": "Tournament definitions"
+    },
+    "/settings/{settingId}": {
+      "schema": "settings",
+      "description": "Global league configuration"
+    },
+    "/recurring_schedules/{schedId}": {
+      "schema": "recurring_schedules",
+      "description": "Weekly recurring timetable"
+    },
+    "/go_recurring_schedules_prod/{schedId}": {
+      "schema": "recurring_schedules",
+      "description": "Production recurring timetable"
+    },
+    "/attendance/{recordId}": {
+      "schema": "attendance",
+      "description": "Attendance tracking records"
+    },
+    "/consent_forms/{consentId}": {
+      "schema": "consent_forms",
+      "description": "Digital parental consent submissions"
+    },
+    "/app_settings/{settingId}": {
+      "schema": "app_settings",
+      "description": "System branding and crest settings"
+    },
+    "/mail/{mailId}": {
+      "schema": "mail",
+      "description": "Queued notification emails processed by Trigger Email Extension and Cloud Functions"
+    }
+  }
+}

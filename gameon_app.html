@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Football United</title>
+  <meta name="description" content="Football United Sports League & Attendance Manager">
+  <meta property="og:title" content="Football United">
+  <meta property="og:description" content="Football United Sports League & Attendance Manager">
+  <meta property="og:site_name" content="Football United">
+  <meta name="application-name" content="Football United">
+  <meta name="apple-mobile-web-app-title" content="Football United">
+  
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Imports -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom animations and styling */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    body {
+      background-color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+    }
+    .text-display {
+      font-family: 'Outfit', sans-serif;
+    }
+    .text-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 dark:text-slate-200">
+
+  <!-- Navigation / Header -->
+  <header class="bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-900 py-4 px-6 sticky top-0 z-50 shadow-3xs">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <!-- Logo -->
+        <div class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shadow-md">
+          <span class="text-display font-black text-lg">G</span>
+        </div>
+        <div>
+          <h1 class="text-display font-black text-lg tracking-tight text-slate-900 dark:text-white">GAME ON</h1>
+          <p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest leading-none">Senior Engineering Edition</p>
+        </div>
+      </div>
+      
+      <!-- Interactive Roster Toggle for Testing -->
+      <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 p-1.5 px-3 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+        <span class="text-xs font-semibold text-slate-650 dark:text-slate-400">Roster Status:</span>
+        <button id="toggle-roster-btn" class="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-900/40 hover:bg-emerald-200 transition">
+          Active (Beckham, Messi, etc)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+    
+    <!-- Active Match Scoreboard Banner -->
+    <div class="bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-slate-950/20 relative overflow-hidden">
+      <!-- Glow rings -->
+      <div class="absolute -right-12 -top-12 w-48 h-48 rounded-full border border-white/5 pointer-events-none"></div>
+      <div class="absolute -left-12 -bottom-12 w-48 h-48 rounded-full border border-white/5 pointer-events-none"></div>
+      
+      <!-- Live Indicator -->
+      <div class="flex justify-center mb-4">
+        <span class="inline-flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/35 text-rose-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">
+          <span class="w-2 h-2 rounded-full bg-rose-500"></span> Live Match Tracking
+        </span>
+      </div>
+
+      <!-- The Scoreboard -->
+      <div class="grid grid-cols-3 items-center gap-4 text-center">
+        <!-- Home Team -->
+        <div class="space-y-2">
+          <div class="inline-flex w-12 h-12 rounded-full bg-emerald-600 items-center justify-center text-white text-display font-black text-xl shadow-lg shadow-emerald-500/10">
+            RD
+          </div>
+          <h2 class="text-display font-extrabold text-base sm:text-lg truncate">Red Devils</h2>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Home</p>
+        </div>
+
+        <!-- Score & Divider -->
+        <div class="space-y-1">
+          <div class="flex items-center justify-center gap-4 sm:gap-6">
+            <span id="scoreboard-home-score" class="text-display font-black text-4xl sm:text-6xl tracking-tight text-white font-mono">0</span>
+            <span class="text-slate-600 text-display font-black text-2xl sm:text-4xl">-</span>
+            <span id="scoreboard-away-score" class="text-display font-black text-4xl sm:text-6xl tracking-tight text-white font-mono">0</span>
+          </div>
+          <div class="text-[11px] text-emerald-400 font-semibold uppercase tracking-wider font-mono" id="score-discrepancy-status">
+            Standings Sync: Match In Progress
+          </div>
+        </div>
+
+        <!-- Away Team -->
+        <div class="space-y-2">
+          <div class="inline-flex w-12 h-12 rounded-full bg-blue-600 items-center justify-center text-white text-display font-black text-xl shadow-lg shadow-blue-500/10">
+            BS
+          </div>
+          <h2 class="text-display font-extrabold text-base sm:text-lg truncate">Blue Stars</h2>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Away</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Entry Columns -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Home Goals Panel -->
+      <div class="bg-white dark:bg-slate-950 border border-slate-150 dark:border-slate-900 rounded-3xl p-5 shadow-3xs flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+            <h3 class="text-display font-extrabold text-sm text-slate-900 dark:text-white uppercase tracking-wider">Red Devils Goals</h3>
+          </div>
+          
+          <!-- Dynamic Goals Container for Home -->
+          <div id="home-goals-container" class="space-y-1 min-h-[80px] bg-slate-50/50 dark:bg-slate-900/30 p-3 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+            <!-- Dynamic rows will be appended here -->
+            <div class="empty-state text-[11px] text-slate-400 text-center py-6 italic">No home goals recorded yet</div>
+          </div>
+        </div>
+
+        <!-- Home Interactive Controls -->
+        <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-900">
+          <button type="button" class="add-goal-btn bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 text-xs font-black py-3 rounded-xl transition duration-150 active:scale-95 flex items-center justify-center gap-1 border border-emerald-100 dark:border-emerald-900/40 cursor-pointer min-h-[44px]" data-team="home" data-type="League">
+            ⚽ + League
+          </button>
+          <button type="button" class="add-friendly-goal-btn bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-900 dark:text-slate-350 text-xs font-black py-3 rounded-xl transition duration-150 active:scale-95 flex items-center justify-center gap-1 border border-slate-200 dark:border-slate-800 cursor-pointer min-h-[44px]" data-team="home" data-type="Friendly">
+            ✨ + Friendly
+          </button>
+        </div>
+      </div>
+
+      <!-- Away Goals Panel -->
+      <div class="bg-white dark:bg-slate-950 border border-slate-150 dark:border-slate-900 rounded-3xl p-5 shadow-3xs flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+            <h3 class="text-display font-extrabold text-sm text-slate-900 dark:text-white uppercase tracking-wider">Blue Stars Goals</h3>
+          </div>
+          
+          <!-- Dynamic Goals Container for Away -->
+          <div id="away-goals-container" class="space-y-1 min-h-[80px] bg-slate-50/50 dark:bg-slate-900/30 p-3 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+            <!-- Dynamic rows will be appended here -->
+            <div class="empty-state text-[11px] text-slate-400 text-center py-6 italic">No away goals recorded yet</div>
+          </div>
+        </div>
+
+        <!-- Away Interactive Controls -->
+        <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-900">
+          <button type="button" class="add-goal-btn bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 text-xs font-black py-3 rounded-xl transition duration-150 active:scale-95 flex items-center justify-center gap-1 border border-emerald-100 dark:border-emerald-900/40 cursor-pointer min-h-[44px]" data-team="away" data-type="League">
+            ⚽ + League
+          </button>
+          <button type="button" class="add-friendly-goal-btn bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-900 dark:text-slate-350 text-xs font-black py-3 rounded-xl transition duration-150 active:scale-95 flex items-center justify-center gap-1 border border-slate-200 dark:border-slate-800 cursor-pointer min-h-[44px]" data-team="away" data-type="Friendly">
+            ✨ + Friendly
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Real-time Live State Monitor (Developer Console Look) -->
+    <div class="bg-slate-900 text-slate-300 rounded-3xl p-5 border border-slate-800 space-y-3">
+      <div class="flex items-center justify-between">
+        <h4 class="text-display font-bold text-xs uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Match Object State Auto-Save Logs
+        </h4>
+        <span class="text-[9px] font-mono bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">Real-time Hook Active</span>
+      </div>
+      <div class="bg-slate-950 rounded-2xl p-4 font-mono text-[11px] overflow-x-auto text-slate-400 max-h-40 overflow-y-auto scrollbar-thin">
+        <pre id="state-json-output">// State updates will render here dynamically...</pre>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="text-center py-8 text-xs text-slate-400 max-w-4xl mx-auto border-t border-slate-100 dark:border-slate-900 mt-10">
+    <p>© 2026 Game On - Refactored Event Delegation Routing Engine</p>
+  </footer>
+
+  <script>
+    // ================= GLOBAL DATABASE STATE =================
+    const defaultPlayers = [
+      { id: 'p1', name: 'David Beckham' },
+      { id: 'p2', name: 'Thierry Henry' },
+      { id: 'p3', name: 'Cristiano Ronaldo' },
+      { id: 'p4', name: 'Lionel Messi' },
+      { id: 'p5', name: 'Wayne Rooney' }
+    ];
+
+    const matchState = {
+      id: 'm-123',
+      homeTeam: 'Red Devils',
+      awayTeam: 'Blue Stars',
+      homeScore: 0,
+      awayScore: 0,
+      goals: [],
+      // Team rosters (p1, p3, p5 belong to Red Devils; p2, p4 belong to Blue Stars)
+      homeRoster: ['p1', 'p3', 'p5'],
+      awayRoster: ['p2', 'p4']
+    };
+
+    let isRosterActive = true; // State for demoing safety guard fallbacks
+
+    // ================= 1. EVENT DELEGATION ROUTING FIX =================
+    document.addEventListener('click', function (e) {
+      // Catch additions by class, dataset, or action parameters safely
+      const addGoalBtn = e.target.closest('.add-goal-btn') || e.target.closest('[data-action="add-goal"]');
+      const addFriendlyGoalBtn = e.target.closest('.add-friendly-goal-btn') || e.target.closest('[data-action="add-friendly-goal"]');
+      const removeGoalBtn = e.target.closest('[data-action="remove-goal"]');
+
+      if (addGoalBtn) {
+        e.preventDefault(); // Prevent accidental form submissions/page reloads
+        const team = addGoalBtn.getAttribute('data-team') || 'home';
+        const type = addGoalBtn.getAttribute('data-type') || 'League';
+        addGoalRow(team, type);
+      } else if (addFriendlyGoalBtn) {
+        e.preventDefault();
+        const team = addFriendlyGoalBtn.getAttribute('data-team') || 'home';
+        addFriendlyGoalRow(team);
+      } else if (removeGoalBtn) {
+        e.preventDefault();
+        const rowId = removeGoalBtn.getAttribute('data-target-id');
+        const row = document.getElementById(rowId);
+        if (row) {
+          row.remove();
+          saveGoalsState();
+          recalculateScores();
+        }
+      }
+    });
+
+    // ================= 2. SAFE GOAL ROW DYNAMIC GENERATION =================
+    function addGoalRow(team, type) {
+      const containerId = team === 'home' ? 'home-goals-container' : 'away-goals-container';
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      // Remove empty state message if it exists
+      const emptyState = container.querySelector('.empty-state');
+      if (emptyState) emptyState.remove();
+
+      // Retrieve team roster with ROSTER SAFETY GUARD
+      const teamRoster = isRosterActive 
+        ? (team === 'home' ? matchState.homeRoster : matchState.awayRoster)
+        : null; // Simulate undefined or empty roster
+
+      // ROSTER SAFETY GUARD: fallback to all league players or text input if empty
+      const activePlayers = (teamRoster && teamRoster.length > 0)
+        ? defaultPlayers.filter(p => teamRoster.includes(p.id))
+        : defaultPlayers; // Display all league players instead of throwing TypeError
+
+      const rowId = `goal-row-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+      
+      const selectOptions = activePlayers.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      
+      const rowHtml = `
+        <div id="${rowId}" class="flex items-center gap-2 mb-2 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-800 animate-fade-in" data-row-type="goal" data-team="${team}">
+          <!-- Scorer Dropdown Selection -->
+          <div class="flex-grow">
+            <select class="goal-player-select w-full text-xs bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition duration-150">
+              <option value="">-- Select Scorer --</option>
+              ${selectOptions}
+              <option value="unassigned">Unassigned Goal</option>
+            </select>
+          </div>
+          
+          <!-- Minute Info -->
+          <div class="shrink-0 flex items-center gap-1 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1">
+            <span class="text-[9px] font-black text-slate-400">MIN</span>
+            <input type="number" min="1" max="120" value="${10 + Math.floor(Math.random() * 80)}" class="goal-minute-input w-10 text-xs bg-transparent text-slate-800 dark:text-slate-100 border-none p-0 text-center font-bold font-mono focus:outline-none" />
+          </div>
+
+          <!-- Type selection -->
+          <div class="shrink-0">
+            <select class="goal-type-select text-xs bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition duration-150">
+              <option value="League" ${type === 'League' ? 'selected' : ''}>League</option>
+              <option value="Friendly" ${type === 'Friendly' ? 'selected' : ''}>Friendly</option>
+              <option value="Own Goal">Own Goal</option>
+            </select>
+          </div>
+
+          <!-- Remove Goal Row Button -->
+          <button type="button" data-action="remove-goal" data-target-id="${rowId}" class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-500 hover:text-white dark:bg-rose-950/20 dark:hover:bg-rose-600 dark:text-rose-400 dark:hover:text-white transition flex items-center justify-center font-black text-xs shrink-0 cursor-pointer shadow-3xs" title="Remove goal record">
+            ✕
+          </button>
+        </div>
+      `;
+
+      container.insertAdjacentHTML('beforeend', rowHtml);
+
+      // ================= 4. REAL-TIME AUTO-SAVE INTEGRATION =================
+      const newRow = document.getElementById(rowId);
+      if (newRow) {
+        const inputs = newRow.querySelectorAll('select, input');
+        inputs.forEach(input => {
+          // Bind both change and input listeners to catch slider/typing/dropdown updates instantly
+          input.addEventListener('change', () => {
+            saveGoalsState();
+            recalculateScores();
+          });
+          input.addEventListener('input', () => {
+            saveGoalsState();
+            recalculateScores();
+          });
+        });
+      }
+
+      saveGoalsState();
+      recalculateScores();
+    }
+
+    function addFriendlyGoalRow(team) {
+      addGoalRow(team, 'Friendly');
+    }
+
+    // ================= 3. GOAL REMOVAL & SCORE AUTO-CALCULATION =================
+    function recalculateScores() {
+      let homeScore = 0;
+      let awayScore = 0;
+
+      // Extract each goal row in both containers and count League Goals towards match score
+      const goalRows = document.querySelectorAll('[data-row-type="goal"]');
+      goalRows.forEach(row => {
+        const team = row.getAttribute('data-team');
+        const typeSelect = row.querySelector('.goal-type-select');
+        const type = typeSelect ? typeSelect.value : 'League';
+
+        if (type === 'League') {
+          if (team === 'home') homeScore++;
+          if (team === 'away') awayScore++;
+        } else if (type === 'Own Goal') {
+          // Own Goal scores for the OPPOSITE team
+          if (team === 'home') awayScore++;
+          if (team === 'away') homeScore++;
+        }
+      });
+
+      // Update local matchState object
+      matchState.homeScore = homeScore;
+      matchState.awayScore = awayScore;
+
+      // Update scoreboard elements in real-time
+      document.getElementById('scoreboard-home-score').textContent = homeScore;
+      document.getElementById('scoreboard-away-score').textContent = awayScore;
+
+      updateConsoleLog();
+    }
+
+    // Auto-saves state by parsing DOM into the matchState object
+    function saveGoalsState() {
+      const goals = [];
+      const goalRows = document.querySelectorAll('[data-row-type="goal"]');
+      
+      goalRows.forEach(row => {
+        const team = row.getAttribute('data-team');
+        const playerSelect = row.querySelector('.goal-player-select');
+        const minuteInput = row.querySelector('.goal-minute-input');
+        const typeSelect = row.querySelector('.goal-type-select');
+
+        const playerId = playerSelect ? playerSelect.value : '';
+        const playerName = playerId 
+          ? (playerId === 'unassigned' ? 'Unassigned' : (defaultPlayers.find(p => p.id === playerId)?.name || 'Unknown'))
+          : 'Pending Selection';
+        
+        goals.push({
+          id: row.id,
+          playerId: playerId,
+          playerName: playerName,
+          minute: minuteInput ? parseInt(minuteInput.value) || 0 : 0,
+          team: team,
+          type: typeSelect ? typeSelect.value : 'League'
+        });
+      });
+
+      matchState.goals = goals;
+      updateConsoleLog();
+    }
+
+    // Update empty states visually if no goals remain
+    function refreshEmptyStates() {
+      ['home-goals-container', 'away-goals-container'].forEach(cid => {
+        const container = document.getElementById(cid);
+        if (container) {
+          const rows = container.querySelectorAll('[data-row-type="goal"]');
+          if (rows.length === 0 && !container.querySelector('.empty-state')) {
+            const teamLabel = cid.includes('home') ? 'home' : 'away';
+            container.innerHTML = `<div class="empty-state text-[11px] text-slate-400 text-center py-6 italic">No ${teamLabel} goals recorded yet</div>`;
+          }
+        }
+      });
+    }
+
+    // Render simulated database logs
+    function updateConsoleLog() {
+      const output = document.getElementById('state-json-output');
+      if (output) {
+        output.textContent = JSON.stringify(matchState, null, 2);
+      }
+      refreshEmptyStates();
+    }
+
+    // ================= INITIALIZATION & TESTING TRIGGERS =================
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize scoreboard and logger
+      updateConsoleLog();
+
+      // Demo Switch for Empty Roster safety guard trigger
+      const toggleRosterBtn = document.getElementById('toggle-roster-btn');
+      if (toggleRosterBtn) {
+        toggleRosterBtn.addEventListener('click', () => {
+          isRosterActive = !isRosterActive;
+          if (isRosterActive) {
+            toggleRosterBtn.textContent = 'Active (Beckham, Messi, etc)';
+            toggleRosterBtn.className = 'text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-900/40 hover:bg-emerald-200 transition';
+          } else {
+            toggleRosterBtn.textContent = 'Empty (Safety Guard Enabled)';
+            toggleRosterBtn.className = 'text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-amber-900/40 hover:bg-amber-200 transition';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

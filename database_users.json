@@ -1,0 +1,26 @@
+[
+  {
+    "uid": "user_edema_admin",
+    "email": "edemadavid1@gmail.com",
+    "name": "David Edema",
+    "displayName": "David Edema",
+    "role": "admin",
+    "status": "approved",
+    "passwordHash": "1b55ac78485a2ba6cc385ef31fc645d87945a80fdeb88b91b8217ff44803a4726e3b16dfe07b9394d6f56bc368ecb06b8aaa6a9f492bea92706fe746dc795aec",
+    "salt": "football_united_salt_2026",
+    "createdAt": "2026-09-22T11:48:09.779Z",
+    "updatedAt": "2026-09-25T08:33:07.694Z"
+  },
+  {
+    "uid": "usr_7aea331e01e8e832",
+    "email": "david.edema.volunteer@hillsong.co.uk",
+    "name": "David Edema Volunteer",
+    "displayName": "David Edema Volunteer",
+    "role": "coach",
+    "status": "approved",
+    "passwordHash": "6790b1d27e20ecaa056d259612a5434eea9782b8d6e54b963abed26855b6c1a69742f96ff93c6f039f3eaad37ec893ba10357a9a0aa5cc12b6a7c89b93d0bc7e",
+    "salt": "b358c9a1412eeb1ec9fc51e0e1f875f6",
+    "createdAt": "2026-09-25T08:27:41.224Z",
+    "updatedAt": "2026-09-25T09:13:22.073Z"
+  }
+]

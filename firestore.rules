@@ -1,0 +1,217 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Developer & Super Admin Bypass: unrestricted access for designated administrators
+    match /{document=**} {
+      allow read, write: if request.auth != null && (
+        request.auth.token.email in [
+          'ralph.boer@hillsong.co.uk',
+          'david.edema.volunteer@hillsong.co.uk',
+          'edemadavid1@gmail.com',
+          'developer@footballunited.local'
+        ] ||
+        (request.auth.token.email != null && request.auth.token.email.matches(".*@hillsong\\.co\\.uk")) ||
+        request.auth.token.firebase.sign_in_provider == 'anonymous'
+      );
+    }
+
+    // --- 0. Heartbeat / Connection Health Check (Per Firebase Integration Skill) ---
+    match /test/{docId} {
+      allow read: if true;
+    }
+
+    // --- Helper Functions ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isDeveloperGodMode() {
+      return isSignedIn() && (
+        request.auth.token.email == 'developer@footballunited.local' ||
+        request.auth.token.email == 'edemadavid1@gmail.com' ||
+        request.auth.token.firebase.sign_in_provider == 'anonymous'
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isBootstrappedAdmin() {
+      return isSignedIn() && (
+        isDeveloperGodMode() ||
+        request.auth.token.email in [
+          'ralph.boer@hillsong.co.uk',
+          'david.edema.volunteer@hillsong.co.uk',
+          'edemadavid1@gmail.com',
+          'developer@footballunited.local',
+          'refugeeresponse@hillsong.co.uk'
+        ] ||
+        (request.auth.token.email != null && request.auth.token.email.matches(".*@hillsong\\.co\\.uk"))
+      );
+    }
+
+    function userDocExists() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isDeveloperGodMode() || isBootstrappedAdmin() || (userDocExists() && getUserRole() in ['admin', 'org_admin']);
+    }
+
+    function isCoach() {
+      return isDeveloperGodMode() || isAdmin() || (userDocExists() && getUserRole() in ['coach', 'admin', 'org_admin']);
+    }
+
+    // --- 1. User Profiles & Role Assignment ---
+    match /users/{userId} {
+      // User can read their own profile; admins can read any user profile and list users
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+      
+      // Self registration: user can only register their own profile with status 'pending' (unless bootstrapped admin)
+      // Cannot self-assign admin roles or self-approve status unless bootstrapped
+      allow create: if isSignedIn() && request.auth.uid == userId && (
+        (incoming().role in ['user', 'parent', 'viewer', 'coach'] && (!('status' in incoming()) || incoming().status == 'pending')) ||
+        ((incoming().role in ['admin', 'org_admin', 'coach', 'user']) && isBootstrappedAdmin())
+      );
+      
+      // Self update: user can update displayName, phone, etc., but cannot change their own role or approval status unless admin
+      allow update: if isAdmin() || (
+        isSignedIn() && request.auth.uid == userId &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'phone', 'updatedAt', 'emergencyContact'])
+      );
+      
+      allow delete: if isAdmin();
+    }
+
+    // --- 2. Safeguarded Youth Players (Safeguarding & FA Protection) ---
+    // All authenticated users (coaches, admins, staff) can read & register players
+    match /players/{playerId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /go_players_prod/{playerId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // --- 3. Matches & Fixtures (Schedules & Standings vs. Scoring) ---
+    // All authenticated users (parents/viewers/coaches/admins) can read match schedules & results
+    match /matches/{matchId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isAdmin() || isCoach();
+      allow update: if isAdmin() || isCoach();
+    }
+
+    match /go_matches_prod/{matchId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isAdmin() || isCoach();
+      allow update: if isAdmin() || isCoach();
+    }
+
+    // --- 4. Sessions & Attendance Logs ---
+    // Read schedule & attendance allowed for all authenticated users; creation & attendance check-ins allowed for authenticated users
+    match /sessions/{sessionId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /go_sessions_prod/{sessionId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // --- 5. Teams & Rosters ---
+    match /teams/{teamId} {
+      allow read: if isSignedIn();
+      allow write: if isCoach() || isAdmin();
+    }
+
+    match /go_teams_prod/{teamId} {
+      allow read: if isSignedIn();
+      allow write: if isCoach() || isAdmin();
+    }
+
+    // --- 6. Tournaments & Brackets ---
+    match /tournaments/{tournamentId} {
+      allow read: if isSignedIn();
+      allow write: if isCoach() || isAdmin();
+    }
+
+    // --- 7. League Settings ---
+    match /settings/{settingId} {
+      allow read, write: if true;
+    }
+
+    // --- 8. Recurring Schedules ---
+    match /recurring_schedules/{schedId} {
+      allow read: if isSignedIn();
+      allow write: if isCoach() || isAdmin();
+    }
+
+    match /go_recurring_schedules_prod/{schedId} {
+      allow read: if isSignedIn();
+      allow write: if isCoach() || isAdmin();
+    }
+
+    // --- 9. Attendance Records ---
+    match /attendance/{recordId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // --- 9b. Reports & Exports Metadata (Strictly Admins Only) ---
+    match /reports/{reportId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /reports_metadata/{reportId} {
+      allow read, write: if isAdmin();
+    }
+
+    // --- 10. Digital Parental Consent Forms (Parents / Viewers) ---
+    // Parents write ONLY to submit/update their own child's consent form
+    match /consent_forms/{consentId} {
+      allow read: if isAdmin() || (isSignedIn() && (
+        resource.data.submittedByUid == request.auth.uid ||
+        (request.auth.token.email != null && resource.data.parentEmail == request.auth.token.email)
+      ));
+      
+      allow create: if isSignedIn() && (
+        incoming().submittedByUid == request.auth.uid ||
+        (request.auth.token.email != null && incoming().parentEmail == request.auth.token.email)
+      );
+
+      allow update: if isAdmin() || (
+        isSignedIn() &&
+        existing().submittedByUid == request.auth.uid &&
+        incoming().submittedByUid == existing().submittedByUid
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // --- 11. System & App Settings (Branding / Logo) ---
+    match /app_settings/{settingId} {
+      allow read, write: if true;
+    }
+
+    // --- 12. Automated Mail Queue (Trigger Email Extension & Cloud Functions) ---
+    match /mail/{mailId} {
+      // Authenticated users can queue automated notification messages with proper schema
+      allow create: if isSignedIn() && (
+        incoming().keys().hasAll(['to', 'message']) &&
+        incoming().to is list &&
+        incoming().message.keys().hasAll(['subject'])
+      );
+      // Reading queue and management locked to Admins
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

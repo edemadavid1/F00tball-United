@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Youth Player Registration | Football United Safeguarding</title>
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/football_united_logo.svg">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        [x-cloak] { display: none !important; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+    </style>
+</head>
+<body class="min-h-full bg-slate-950 text-slate-100 antialiased selection:bg-emerald-500 selection:text-slate-950 flex flex-col justify-between"
+      x-data="playerRegistrationApp()"
+      x-init="initApp()"
+      x-cloak>
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 p-0.5 shadow-md flex items-center justify-center">
+                    <img src="/football_united_logo.svg" alt="Football United Logo" class="w-8 h-8 rounded-lg object-contain bg-slate-950 p-1" onerror="this.src='/icon.svg'">
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                        <span>Football United</span>
+                        <span class="text-[10px] uppercase font-extrabold px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 rounded-full">SafeGuard UK</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Youth Player Registration & Digital Carer Consent</p>
+                </div>
+            </div>
+            
+            <a href="/" class="text-xs font-semibold text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                <span>← Back to League App</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Registration Container -->
+    <main class="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        
+        <!-- Registration Form Card -->
+        <div x-show="!isSubmitted" class="bg-slate-900/90 border border-slate-800/80 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden">
+            
+            <!-- Safeguarding Header Banner -->
+            <div class="bg-slate-900 p-6 sm:p-8 border-b border-slate-800/80">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl shrink-0">
+                        🛡️
+                    </div>
+                    <div class="space-y-1.5">
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">Youth Player Registration</h2>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Welcome to Football United & Game On. Please complete this form to register a youth player. 
+                            Under UK Safeguarding and GDPR compliance, a digital verification link will be emailed to the player's parent, legal guardian, or designated key worker for official consent.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Form Progress Indicator -->
+                <div class="mt-6 grid grid-cols-3 gap-2 text-xs font-semibold">
+                    <div class="flex items-center space-x-2 text-emerald-400">
+                        <span class="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-xs font-bold">1</span>
+                        <span>Player Info</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-emerald-400">
+                        <span class="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-xs font-bold">2</span>
+                        <span>Carer & ID Photo</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-emerald-400">
+                        <span class="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-xs font-bold">3</span>
+                        <span>Digital Consent</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Body -->
+            <form @submit.prevent="submitRegistration()" class="p-6 sm:p-8 space-y-8">
+                
+                <!-- Error Alert Box -->
+                <div x-show="errorMessage" class="bg-rose-950/50 border border-rose-500/40 rounded-xl p-4 text-rose-200 text-xs flex items-start gap-3" x-transition>
+                    <span class="text-base">⚠️</span>
+                    <span x-text="errorMessage"></span>
+                </div>
+
+                <!-- ============================================== -->
+                <!-- SECTION 1: YOUTH PLAYER INFORMATION -->
+                <!-- ============================================== -->
+                <div class="space-y-4">
+                    <div class="border-b border-slate-800 pb-2">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>⚽ Section 1: Youth Player Details</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">Please provide the player's full legal name and date of birth.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- First Name -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold text-slate-300">Player First Name <span class="text-emerald-400">*</span></label>
+                            <input type="text" 
+                                   x-model="form.firstName" 
+                                   required 
+                                   placeholder="e.g. Leo"
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold text-slate-300">Player Last Name <span class="text-emerald-400">*</span></label>
+                            <input type="text" 
+                                   x-model="form.lastName" 
+                                   required 
+                                   placeholder="e.g. Sterling"
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold text-slate-300">Date of Birth <span class="text-emerald-400">*</span></label>
+                            <input type="date" 
+                                   x-model="form.dob" 
+                                   required 
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        </div>
+
+                        <!-- Playing Position -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold text-slate-300">Preferred Position</label>
+                            <select x-model="form.position" 
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                                <option value="Forward">Forward / Striker</option>
+                                <option value="Midfielder">Midfielder</option>
+                                <option value="Defender">Defender</option>
+                                <option value="Goalkeeper">Goalkeeper</option>
+                                <option value="Flexible / Any">Flexible / Any Position</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Medical Notes & Allergies -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-slate-300">
+                            Medical Notes, Allergies, or Health Considerations
+                            <span class="text-slate-500 font-normal">(Confidential / Safeguarding use only)</span>
+                        </label>
+                        <textarea x-model="form.medicalNotes" 
+                                  rows="2" 
+                                  placeholder="e.g. Asthma (carries blue inhaler), nut allergy, previous ankle injury, or write 'None'"
+                                  class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"></textarea>
+                    </div>
+                </div>
+
+                <!-- ============================================== -->
+                <!-- SECTION 2: HEAD-AND-SHOULDERS PHOTO UPLOAD -->
+                <!-- ============================================== -->
+                <div class="space-y-4">
+                    <div class="border-b border-slate-800 pb-2">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>📸 Section 2: Check-In Identity Photo</span>
+                            <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-semibold">Pitch Safety</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">
+                            Please provide a clear front-facing head-and-shoulders photo. This is stored securely in Firebase Storage and used strictly by coaches to verify player check-in identity.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center gap-6 bg-slate-950/60 border border-slate-800/80 rounded-2xl p-5">
+                        <!-- Photo Preview Canvas / Circle -->
+                        <div class="relative w-28 h-28 rounded-full border-2 border-dashed border-emerald-500/40 bg-slate-900 flex items-center justify-center overflow-hidden shrink-0 group">
+                            <template x-if="photoPreviewUrl">
+                                <img :src="photoPreviewUrl" alt="Player Photo Preview" class="w-full h-full object-cover">
+                            </template>
+                            <template x-if="!photoPreviewUrl">
+                                <div class="text-center p-2 text-slate-500 space-y-1">
+                                    <div class="text-2xl">👤</div>
+                                    <div class="text-[9px] font-bold uppercase tracking-wider">Headshot</div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Upload Actions & Camera Guide -->
+                        <div class="space-y-3 flex-1 text-center sm:text-left">
+                            <div>
+                                <label class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl cursor-pointer shadow-sm transition">
+                                    <span>📷 Take Photo / Upload File</span>
+                                    <input type="file" 
+                                           accept="image/png, image/jpeg, image/webp" 
+                                           capture="user"
+                                           @change="handlePhotoSelect($event)" 
+                                           class="hidden">
+                                </label>
+                                
+                                <template x-if="photoPreviewUrl">
+                                    <button type="button" 
+                                            @click="removePhoto()" 
+                                            class="ml-2 text-xs text-rose-400 hover:text-rose-300 underline font-semibold">
+                                        Remove Photo
+                                    </button>
+                                </template>
+                            </div>
+
+                            <p class="text-[11px] text-slate-400 leading-normal">
+                                Guidelines: Clear lighting, head and shoulders visible, no sunglasses or face coverings. Max size: 5MB (JPEG, PNG, WebP).
+                            </p>
+
+                            <!-- Photo upload progress bar -->
+                            <div x-show="uploadProgress > 0 && uploadProgress < 100" class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-200" :style="`width: ${uploadProgress}%`"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================== -->
+                <!-- SECTION 3: PARENT / CARER / SOCIAL WORKER DETAILS -->
+                <!-- ============================================== -->
+                <div class="space-y-4">
+                    <div class="border-b border-slate-800 pb-2">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>👥 Section 3: Carer, Guardian or Key Worker Details</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">The verification email will be dispatched to this carer's inbox for digital authorization.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Carer Full Name -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold text-slate-300">Carer Full Name <span class="text-emerald-400">*</span></label>
+                            <input type="text" 
+                                   x-model="form.carerName" 
+                                   required 
+                                   placeholder="e.g. Sarah Sterling"
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        </div>
+
+                        <!-- Relationship to Youth -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold text-slate-300">Relationship to Player <span class="text-emerald-400">*</span></label>
+                            <select x-model="form.carerRelationship" 
+                                    required
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                                <option value="Parent / Legal Guardian">Parent / Legal Guardian</option>
+                                <option value="Social Worker">Social Worker</option>
+                                <option value="Foster Carer">Foster Carer</option>
+                                <option value="Key Worker / Support Worker">Key Worker / Support Worker</option>
+                                <option value="Family Member (Authorized)">Authorized Family Member</option>
+                                <option value="Other">Other Authorized Guardian</option>
+                            </select>
+                        </div>
+
+                        <!-- Carer Email (Crucial for Verification Loop) -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold text-slate-300">
+                                Carer Email Address <span class="text-emerald-400">*</span>
+                                <span class="text-[10px] text-emerald-400 font-normal">(Receives verification link)</span>
+                            </label>
+                            <input type="email" 
+                                   x-model="form.carerEmail" 
+                                   required 
+                                   placeholder="carer@example.com"
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        </div>
+
+                        <!-- Carer Emergency Phone -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold text-slate-300">Emergency Phone Number <span class="text-emerald-400">*</span></label>
+                            <input type="tel" 
+                                   x-model="form.carerPhone" 
+                                   required 
+                                   placeholder="e.g. 07123 456789"
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================== -->
+                <!-- SECTION 4: MANDATORY SAFEGUARDING CONSENT -->
+                <!-- ============================================== -->
+                <div class="space-y-4 bg-slate-950/70 border border-slate-800/80 rounded-2xl p-5">
+                    <div class="border-b border-slate-800 pb-2">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>⚖️ Section 4: Mandatory Safeguarding & GDPR Consent</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">All data is encrypted and managed under UK GDPR and FA safeguarding policies.</p>
+                    </div>
+
+                    <div class="space-y-3 text-xs text-slate-300">
+                        <!-- Consent 1: Participation -->
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input type="checkbox" 
+                                   x-model="form.consentParticipation" 
+                                   required 
+                                   class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-900 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-slate-950">
+                            <span class="leading-relaxed">
+                                <strong class="text-white">Participation Consent:</strong> I confirm I am the parent/guardian/social worker with legal responsibility and grant permission for this youth to participate in Football United & Game On training sessions, fixtures, and workshops. <span class="text-emerald-400">*</span>
+                            </span>
+                        </label>
+
+                        <!-- Consent 2: Medical & Emergency Response -->
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input type="checkbox" 
+                                   x-model="form.consentMedical" 
+                                   required 
+                                   class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-900 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-slate-950">
+                            <span class="leading-relaxed">
+                                <strong class="text-white">Medical & Emergency Response:</strong> I consent to qualified first-aiders and staff providing emergency treatment or seeking NHS emergency medical care if required during sessions. <span class="text-emerald-400">*</span>
+                            </span>
+                        </label>
+
+                        <!-- Consent 3: Photography & Identification -->
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input type="checkbox" 
+                                   x-model="form.consentPhotography" 
+                                   required 
+                                   class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-900 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-slate-950">
+                            <span class="leading-relaxed">
+                                <strong class="text-white">ID & Check-in Photo Consent:</strong> I consent to the head-and-shoulders photo being retained securely in the system for player check-in verification and pitch safeguarding. <span class="text-emerald-400">*</span>
+                            </span>
+                        </label>
+
+                        <!-- Consent 4: Media / Match Reports (Optional) -->
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input type="checkbox" 
+                                   x-model="form.consentMedia" 
+                                   class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-900 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-slate-950">
+                            <span class="leading-relaxed">
+                                <strong class="text-white">Community & Match Report Photos (Optional):</strong> I consent to group match action photos being published on official community match reports and celebration boards.
+                            </span>
+                        </label>
+
+                        <!-- Consent 5: Accuracy Statement -->
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input type="checkbox" 
+                                   x-model="form.consentAccuracy" 
+                                   required 
+                                   class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-900 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-slate-950">
+                            <span class="leading-relaxed">
+                                <strong class="text-white">Information Accuracy:</strong> I confirm that all information provided in this registration is true and accurate. <span class="text-emerald-400">*</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Button Area -->
+                <div class="pt-2">
+                    <button type="submit" 
+                            :disabled="isSubmitting"
+                            class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 px-6 rounded-xl shadow-lg flex items-center justify-center space-x-2 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border border-slate-800">
+                        <template x-if="!isSubmitting">
+                            <span class="flex items-center gap-2">
+                                <span>Submit Registration & Request Digital Consent</span>
+                                <span>→</span>
+                            </span>
+                        </template>
+                        <template x-if="isSubmitting">
+                            <span class="flex items-center gap-2">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Encrypting & Dispatching Verification Email...</span>
+                            </span>
+                        </template>
+                    </button>
+                    <p class="text-center text-[11px] text-slate-500 mt-2">
+                        🔒 SafeGuard encrypted pipeline • Firebase Security Rules active
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- SUBMISSION SUCCESS & VERIFICATION SCREEN -->
+        <!-- ============================================== -->
+        <div x-show="isSubmitted" class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 sm:p-10 space-y-6 text-center" x-transition>
+            <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-lg shadow-emerald-500/10 animate-bounce">
+                ✉️
+            </div>
+
+            <div class="space-y-2 max-w-md mx-auto">
+                <span class="inline-block px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-extrabold uppercase tracking-wider">
+                    Status: Pending Carer Verification
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Registration Submitted!</h2>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    A digital consent verification email has been dispatched to <strong class="text-emerald-400" x-text="form.carerEmail"></strong>.
+                </p>
+            </div>
+
+            <!-- Player Profile Badge Preview -->
+            <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 max-w-md mx-auto text-left flex items-center gap-4">
+                <div class="w-16 h-16 rounded-full border-2 border-emerald-500 overflow-hidden bg-slate-900 shrink-0">
+                    <img :src="photoPreviewUrl || '/icon.svg'" alt="Player Preview" class="w-full h-full object-cover">
+                </div>
+                <div class="space-y-1 min-w-0">
+                    <h4 class="text-base font-bold text-white truncate" x-text="form.firstName + ' ' + form.lastName"></h4>
+                    <p class="text-xs text-slate-400 flex items-center gap-2">
+                        <span>DOB: <strong class="text-slate-200" x-text="form.dob"></strong></span>
+                        <span>•</span>
+                        <span>Pos: <strong class="text-slate-200" x-text="form.position"></strong></span>
+                    </p>
+                    <p class="text-[11px] text-emerald-400 font-semibold">
+                        Carer: <span x-text="form.carerName + ' (' + form.carerRelationship + ')'"></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Steps Box -->
+            <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-4 text-left max-w-md mx-auto space-y-2.5 text-xs text-slate-300">
+                <h5 class="font-bold text-white text-xs uppercase tracking-wider flex items-center gap-2">
+                    <span>📋 What Happens Next?</span>
+                </h5>
+                <ol class="list-decimal list-inside space-y-1.5 text-slate-400">
+                    <li>The carer/social worker opens the verification email.</li>
+                    <li>They click the single-tap secure <strong>"Approve & Verify Consent"</strong> link.</li>
+                    <li>The youth player is automatically activated on the match roster for safe check-in!</li>
+                </ol>
+            </div>
+
+            <!-- Direct Verification Link (Dev / Preview Convenience) -->
+            <template x-if="directVerifyUrl">
+                <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-xl p-4 max-w-md mx-auto text-left space-y-2">
+                    <div class="flex items-center justify-between text-xs font-bold text-emerald-400">
+                        <span>⚡ Direct Verification Link (Preview Mode)</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">
+                        In preview/demo environments, you can also verify immediately by clicking below:
+                    </p>
+                    <a :href="directVerifyUrl" 
+                       class="block text-center w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm">
+                        ✅ Click to Verify Consent Now →
+                    </a>
+                </div>
+            </template>
+
+            <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button type="button" 
+                        @click="resetForm()" 
+                        class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer">
+                    + Register Another Player
+                </button>
+                <a href="/" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition">
+                    Return to League App
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-900/60 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-4xl mx-auto px-4 space-y-1">
+            <p>Football United SafeGuard Portal • Built in accordance with UK FA Youth Safeguarding Standards</p>
+            <p class="text-[10px]">Data processed in compliance with the General Data Protection Regulation (GDPR) & UK Data Protection Act 2018.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Modular Import & Alpine Form Logic -->
+    <script type="module">
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            projectId: "football-united-77861",
+            appId: "1:144929943916:web:99adc198d855389ae1c349",
+            apiKey: "AIzaSyCku0OPiPLAKgS7MyGnOJXSzl2QETXuUrE",
+            authDomain: "football-united-77861.firebaseapp.com",
+            storageBucket: "football-united-77861.firebasestorage.app",
+            messagingSenderId: "144929943916",
+            measurementId: "G-68SSTY86YM"
+        };
+
+        const fbApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+        let storage = null;
+        try {
+            storage = getStorage(fbApp);
+        } catch (e) {
+            console.warn("Storage init fallback:", e);
+        }
+        const auth = getAuth(fbApp);
+
+        // Ensure anonymous session for authorized upload if configured
+        signInAnonymously(auth).catch(err => console.warn("Anon auth notice in register:", err?.message));
+
+        window.playerRegistrationApp = function() {
+            return {
+                form: {
+                    firstName: '',
+                    lastName: '',
+                    dob: '',
+                    position: 'Midfielder',
+                    medicalNotes: '',
+                    carerName: '',
+                    carerRelationship: 'Parent / Legal Guardian',
+                    carerEmail: '',
+                    carerPhone: '',
+                    consentParticipation: false,
+                    consentMedical: false,
+                    consentPhotography: false,
+                    consentMedia: false,
+                    consentAccuracy: false,
+                },
+                selectedFile: null,
+                photoPreviewUrl: '',
+                uploadProgress: 0,
+                isSubmitting: false,
+                isSubmitted: false,
+                errorMessage: '',
+                directVerifyUrl: '',
+
+                initApp() {
+                    console.log("🛡️ Player Registration & Safeguarding module loaded.");
+                },
+
+                handlePhotoSelect(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    // Size validation (Max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        this.errorMessage = "Photo size exceeds 5MB limit. Please choose a smaller image.";
+                        return;
+                    }
+
+                    // Format validation
+                    if (!file.type.startsWith('image/')) {
+                        this.errorMessage = "Only image files (JPEG, PNG, WebP) are allowed.";
+                        return;
+                    }
+
+                    this.errorMessage = '';
+                    this.selectedFile = file;
+
+                    // Create local preview
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.photoPreviewUrl = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                },
+
+                removePhoto() {
+                    this.selectedFile = null;
+                    this.photoPreviewUrl = '';
+                    this.uploadProgress = 0;
+                },
+
+                async uploadPhotoToStorage(): Promise<string> {
+                    if (!this.selectedFile) {
+                        return this.photoPreviewUrl || '';
+                    }
+
+                    // Attempt Direct Firebase Cloud Storage Upload
+                    if (storage) {
+                        try {
+                            const timestamp = Date.now();
+                            const cleanName = this.selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                            const storageRef = ref(storage, `player_photos/${timestamp}_${cleanName}`);
+                            
+                            const uploadTask = uploadBytesResumable(storageRef, this.selectedFile);
+                            
+                            const downloadUrl = await new Promise<string>((resolve, reject) => {
+                                uploadTask.on('state_changed', 
+                                    (snapshot) => {
+                                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                        this.uploadProgress = Math.round(progress);
+                                    },
+                                    (error) => {
+                                        console.warn("Storage upload task error:", error);
+                                        reject(error);
+                                    },
+                                    async () => {
+                                        const url = await getDownloadURL(uploadTask.snapshot.ref);
+                                        resolve(url);
+                                    }
+                                );
+                            });
+
+                            return downloadUrl;
+                        } catch (storageErr) {
+                            console.warn("Direct Firebase Storage failed, falling back to data URL:", storageErr);
+                            // Fallback to data URL
+                            return this.photoPreviewUrl;
+                        }
+                    }
+
+                    return this.photoPreviewUrl;
+                },
+
+                async submitRegistration() {
+                    this.errorMessage = '';
+
+                    // Validate mandatory checkboxes
+                    if (!this.form.consentParticipation || !this.form.consentMedical || !this.form.consentPhotography || !this.form.consentAccuracy) {
+                        this.errorMessage = "Please accept all mandatory safeguarding, participation, and photo consent checkboxes to proceed.";
+                        return;
+                    }
+
+                    if (!this.form.firstName.trim() || !this.form.lastName.trim() || !this.form.dob || !this.form.carerEmail.trim()) {
+                        this.errorMessage = "Please fill in all required fields (Player Name, Date of Birth, and Carer Email).";
+                        return;
+                    }
+
+                    this.isSubmitting = true;
+
+                    try {
+                        // 1. Upload photo to Firebase Storage
+                        let photoUrl = '';
+                        if (this.selectedFile || this.photoPreviewUrl) {
+                            photoUrl = await this.uploadPhotoToStorage();
+                        }
+
+                        // 2. Prepare payload for /api/register-player
+                        const payload = {
+                            player_name: `${this.form.firstName.trim()} ${this.form.lastName.trim()}`,
+                            first_name: this.form.firstName.trim(),
+                            last_name: this.form.lastName.trim(),
+                            dob: this.form.dob,
+                            position: this.form.position,
+                            medical_notes: this.form.medicalNotes.trim() || 'None',
+                            photo_url: photoUrl,
+                            carer_name: this.form.carerName.trim(),
+                            carer_relationship: this.form.carerRelationship,
+                            carer_email: this.form.carerEmail.trim().toLowerCase(),
+                            carer_phone: this.form.carerPhone.trim(),
+                            consent_participation: this.form.consentParticipation,
+                            consent_medical: this.form.consentMedical,
+                            consent_photography: this.form.consentPhotography,
+                            consent_media: this.form.consentMedia,
+                            timestamp: new Date().toISOString()
+                        };
+
+                        // 3. Dispatch to backend registration endpoint
+                        const response = await fetch('/api/register-player', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const result = await response.json();
+
+                        if (!response.ok || !result.success) {
+                            throw new Error(result.message || 'Failed to submit youth registration.');
+                        }
+
+                        // Store direct verification link for demo/preview display
+                        if (result.verificationUrl) {
+                            this.directVerifyUrl = result.verificationUrl;
+                        }
+
+                        this.isSubmitted = true;
+                    } catch (err) {
+                        console.error("Registration error:", err);
+                        this.errorMessage = err.message || "An error occurred while submitting the registration. Please try again.";
+                    } finally {
+                        this.isSubmitting = false;
+                    }
+                },
+
+                resetForm() {
+                    this.form = {
+                        firstName: '',
+                        lastName: '',
+                        dob: '',
+                        position: 'Midfielder',
+                        medicalNotes: '',
+                        carerName: '',
+                        carerRelationship: 'Parent / Legal Guardian',
+                        carerEmail: '',
+                        carerPhone: '',
+                        consentParticipation: false,
+                        consentMedical: false,
+                        consentPhotography: false,
+                        consentMedia: false,
+                        consentAccuracy: false,
+                    };
+                    this.selectedFile = null;
+                    this.photoPreviewUrl = '';
+                    this.uploadProgress = 0;
+                    this.isSubmitted = false;
+                    this.errorMessage = '';
+                    this.directVerifyUrl = '';
+                }
+            };
+        };
+    </script>
+</body>
+</html>

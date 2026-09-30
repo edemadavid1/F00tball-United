@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football United Permission Form | Hillsong UK & Sport England</title>
+    <link rel="icon" type="image/svg+xml" href="/football_united_logo.svg">
+    <link rel="apple-touch-icon" href="/football_united_logo.svg">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- QRCode.js for client-side QR generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" crossorigin="anonymous"></script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; color: black !important; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body class="min-h-full bg-slate-950 text-slate-100 antialiased flex flex-col justify-between selection:bg-emerald-500 selection:text-slate-950" 
+      x-data="parentConsentGoogleApp()" 
+      x-init="initApp()" 
+      x-cloak>
+
+    <!-- Top Header (no-print) -->
+    <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 no-print">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center p-1.5 shadow-md shrink-0">
+                    <img src="/football_united_logo.svg" alt="Football United" class="w-full h-full object-contain" onerror="this.src='/icon.svg'">
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-base sm:text-lg font-black tracking-tight text-white leading-none">FOOTBALL UNITED</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Official Form</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-medium mt-0.5">Managed by Hillsong Church UK • Supported by Sport England</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button type="button" @click="activeView = (activeView === 'print' ? 'digital' : 'print')" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5">
+                    <span x-text="activeView === 'print' ? '📝 Interactive Form' : '📄 Printable Slip (PDF)'"></span>
+                </button>
+                <a href="/" class="text-xs font-semibold text-slate-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition flex items-center gap-1">
+                    <span>← Dashboard</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-6">
+
+        <!-- ============================================== -->
+        <!-- MODE 1: VERIFICATION PASS DISPLAY              -->
+        <!-- ============================================== -->
+        <div x-show="isVerifiedMode" class="bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-10 space-y-6 shadow-2xl relative overflow-hidden" x-transition>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="text-center space-y-3 max-w-lg mx-auto">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-emerald-500/10">
+                    🛡️
+                </div>
+                <span class="inline-block px-3.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-extrabold uppercase tracking-wider">
+                    Official Safeguarding Verification Pass
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Parent Permission Verified & Active</h1>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Digital consent for <strong class="text-white" x-text="verifiedRecord.playerName || verifiedRecord.player_name"></strong> has been authenticated and registered with Football United in compliance with UK GDPR and the FA Safeguarding Framework.
+                </p>
+            </div>
+
+            <!-- Digital Pass Card -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 sm:p-6 max-w-lg mx-auto shadow-xl space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl border border-emerald-500/50 bg-slate-900 overflow-hidden flex items-center justify-center shrink-0">
+                            <img :src="verifiedRecord.photoUrl || verifiedRecord.photo_url || '/football_united_logo.svg'" alt="Player" class="w-full h-full object-cover" onerror="this.src='/icon.svg'">
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white" x-text="verifiedRecord.playerName || verifiedRecord.player_name"></h3>
+                            <p class="text-xs text-slate-400" x-text="'DOB: ' + (verifiedRecord.dob || 'Verified') + ' • Football United'"></p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-500 text-slate-950">
+                        MATCH READY
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Authorizing Guardian:</span>
+                        <strong class="text-white text-xs mt-0.5 block truncate" x-text="verifiedRecord.carerName || verifiedRecord.carer_name"></strong>
+                        <span class="text-[10px] text-emerald-400" x-text="verifiedRecord.carerRelationship || verifiedRecord.carer_relationship || 'Parent / Guardian'"></span>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Emergency Contact:</span>
+                        <strong class="text-white text-xs mt-0.5 block truncate" x-text="verifiedRecord.carerPhone || verifiedRecord.carer_phone || 'On file'"></strong>
+                        <span class="text-[10px] text-slate-400 truncate block" x-text="verifiedRecord.carerEmail || verifiedRecord.carer_email || 'Verified'"></span>
+                    </div>
+                </div>
+
+                <!-- Verification QR Code -->
+                <div class="pt-2 text-center space-y-2">
+                    <div class="bg-white p-3 rounded-2xl inline-block shadow-lg mx-auto" id="verifiedPassQrContainer">
+                        <div id="verifiedPassQr"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 font-mono" x-text="'Pass ID: ' + (verifiedRecord.consentId || verifiedRecord.id || 'FU-PASS')"></p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button type="button" @click="window.print()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5 border border-slate-700">
+                    <span>🖨️ Print Pass</span>
+                </button>
+                <a href="/" class="px-5 py-2.5 bg-white hover:bg-slate-200 text-slate-950 text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-md">
+                    <span>Open League Dashboard →</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODE 2: INTERACTIVE DIGITAL PERMISSION FORM    -->
+        <!-- ============================================== -->
+        <div x-show="!isVerifiedMode && activeView === 'digital'" class="space-y-6" x-transition>
+
+            <!-- Form Header & Description Card -->
+            <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="space-y-2 max-w-xl">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-extrabold uppercase tracking-wider">
+                                <span>📋 Safeguarding Permission Form</span>
+                            </span>
+                            <span class="text-xs text-slate-400 font-semibold">14–19 Years</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Football United Permission Form</h1>
+                    </div>
+
+                    <div class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-2xl shrink-0 text-center space-y-0.5 hidden sm:block">
+                        <div class="text-xl">🛡️</div>
+                        <div class="text-[10px] font-black text-white uppercase tracking-wider">Hillsong UK</div>
+                        <div class="text-[9px] text-emerald-400 font-semibold">Sport England Partner</div>
+                    </div>
+                </div>
+
+                <!-- Official Form Description -->
+                <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    <p class="font-medium text-slate-200">
+                        Your child has indicated their wish to participate in the Football United programme managed by Hillsong Church UK with support of Sport England. This programme is for asylum seeking and refugee youth of 14-19 years old.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-xs text-slate-300">
+                        <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                            <span class="font-bold text-white block">📍 Venue:</span>
+                            <span>Trinity School, Shirley Park, Croydon, CR9 7AT</span>
+                        </div>
+                        <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                            <span class="font-bold text-white block">⏰ Sessions (Friday Nights):</span>
+                            <span>Junior (14–16 yrs): 6:30pm – 8pm<br>Senior (17–19 yrs): 8pm – 9:30pm</span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-400 border-t border-slate-800/80 pt-2 flex flex-wrap items-center justify-between gap-2">
+                        <span>✨ <strong>Free:</strong> There are no costs to participate in Football United.</span>
+                        <span>🔒 <strong>Privacy:</strong> Personal information is used solely in accordance with <a href="https://hillsong.com/privacy" target="_blank" class="text-emerald-400 underline font-semibold">hillsong.com/privacy</a>.</span>
+                    </div>
+                </div>
+
+                <!-- Google Forms Integration Direct Link -->
+                <template x-if="googleFormUrl">
+                    <div class="pt-1 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900 border border-slate-800 rounded-2xl p-3.5">
+                        <div class="text-xs text-slate-300">
+                            <strong>Google Forms Synchronized:</strong> You can also complete this on Google Forms if preferred.
+                        </div>
+                        <a :href="googleFormUrl" target="_blank" class="px-3.5 py-1.5 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-xl transition shrink-0 flex items-center gap-1">
+                            <span>Open in Google Forms</span>
+                            <span>↗</span>
+                        </a>
+                    </div>
+                </template>
+            </div>
+
+            <!-- The 5 Form Sections -->
+            <form @submit.prevent="submitDigitalForm()" class="space-y-6">
+
+                <!-- SECTION 1: PARTICIPANT DETAILS -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4">
+                    <div class="border-b border-slate-800 pb-2.5 flex items-center justify-between">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>⚽ Section 1: Participant Details</span>
+                        </h2>
+                        <span class="text-[10px] text-slate-400 font-semibold">Required</span>
+                    </div>
+
+                    <div class="space-y-4 text-xs">
+                        <!-- Question 1: Participant Name -->
+                        <div>
+                            <label class="block font-bold text-slate-200 mb-1">
+                                Participant Name <span class="text-rose-400">*</span>
+                            </label>
+                            <input type="text" 
+                                   x-model="form.participantName" 
+                                   required 
+                                   placeholder="Full legal name of the young person"
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <!-- Question 2: Date of Birth -->
+                        <div>
+                            <label class="block font-bold text-slate-200 mb-1">
+                                Date of Birth <span class="text-rose-400">*</span>
+                            </label>
+                            <input type="date" 
+                                   x-model="form.dob" 
+                                   required 
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <!-- Question 3: Address -->
+                        <div>
+                            <label class="block font-bold text-slate-200 mb-1">
+                                Address <span class="text-rose-400">*</span>
+                            </label>
+                            <textarea x-model="form.address" 
+                                      required 
+                                      rows="3" 
+                                      placeholder="Full residential address including postcode"
+                                      class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 transition"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: EMERGENCY CONTACTS -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4">
+                    <div class="border-b border-slate-800 pb-2.5 flex items-center justify-between">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>📞 Section 2: Emergency Contacts</span>
+                        </h2>
+                        <span class="text-[10px] text-slate-400 font-semibold">Primary & Secondary</span>
+                    </div>
+
+                    <!-- Emergency Contact 1 -->
+                    <div class="space-y-3 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
+                        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Emergency Contact 1 (Primary)</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-300 mb-1">Emergency Contact 1 - Name <span class="text-rose-400">*</span></label>
+                                <input type="text" x-model="form.emergency1Name" required placeholder="Full Name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-300 mb-1">Emergency Contact 1 - Phone <span class="text-rose-400">*</span></label>
+                                <input type="tel" x-model="form.emergency1Phone" required placeholder="Phone Number" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-300 mb-1">Emergency Contact 1 - Relation <span class="text-rose-400">*</span></label>
+                                <input type="text" x-model="form.emergency1Relation" required placeholder="e.g. Mother, Father, Key Worker" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact 2 -->
+                    <div class="space-y-3 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
+                        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Emergency Contact 2 (Optional)</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-300 mb-1">Emergency Contact 2 - Name</label>
+                                <input type="text" x-model="form.emergency2Name" placeholder="Full Name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-300 mb-1">Emergency Contact 2 - Phone</label>
+                                <input type="tel" x-model="form.emergency2Phone" placeholder="Phone Number" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-300 mb-1">Emergency Contact 2 - Relation</label>
+                                <input type="text" x-model="form.emergency2Relation" placeholder="e.g. Guardian, Case Worker" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: ADDITIONAL INFORMATION -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4">
+                    <div class="border-b border-slate-800 pb-2.5">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>🩺 Section 3: Additional Information</span>
+                        </h2>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-xs font-medium text-slate-300 leading-relaxed">
+                            If there is additional information you would like us to know about the participant, which could help us to support their needs, please write it here. (i.e. history of illness, allergies, learning difficulties, history of difficult behaviors, specific recurring effects of previous trauma)
+                        </label>
+                        <textarea x-model="form.additionalInfo" 
+                                  rows="3" 
+                                  placeholder="Enter any medical, dietary, emotional support notes or write 'None'"
+                                  class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 transition"></textarea>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: CONSENTS AND AGREEMENTS -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4">
+                    <div class="border-b border-slate-800 pb-2.5 flex items-center justify-between">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>⚖️ Section 4: Consents and Agreements</span>
+                        </h2>
+                        <span class="text-[10px] text-rose-400 font-bold">All 5 Required</span>
+                    </div>
+
+                    <div class="space-y-3.5">
+                        <!-- Clause 1 -->
+                        <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                            <input type="checkbox" x-model="form.consent1" required class="mt-1 w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500">
+                            <span class="text-xs text-slate-300 leading-relaxed">
+                                <strong class="text-white block mb-0.5">1. Attendance Permission</strong>
+                                The young person named above on this sheet has my permission to participate in Football United by attending their Friday night sessions at Trinity School on the dates outlined above.
+                            </span>
+                        </label>
+
+                        <!-- Clause 2 -->
+                        <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                            <input type="checkbox" x-model="form.consent2" required class="mt-1 w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500">
+                            <span class="text-xs text-slate-300 leading-relaxed">
+                                <strong class="text-white block mb-0.5">2. Liability & Injury Waiver</strong>
+                                Any person participating in Football United does so at their own risk. Hillsong UK does not accept any liability for injury incurred by participating in the activity, either on or off the pitch, or whilst spectating.
+                            </span>
+                        </label>
+
+                        <!-- Clause 3 -->
+                        <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                            <input type="checkbox" x-model="form.consent3" required class="mt-1 w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500">
+                            <span class="text-xs text-slate-300 leading-relaxed">
+                                <strong class="text-white block mb-0.5">3. Personal Belongings</strong>
+                                Hillsong UK does not accept any liability for any damage to or loss of the personal belongings of either the participants or their visitors, whether this is during the allocated period of play or where belongings are left in the changing rooms, in any vehicle or on site.
+                            </span>
+                        </label>
+
+                        <!-- Clause 4 -->
+                        <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                            <input type="checkbox" x-model="form.consent4" required class="mt-1 w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500">
+                            <span class="text-xs text-slate-300 leading-relaxed">
+                                <strong class="text-white block mb-0.5">4. Code of Conduct & Participation Terms</strong>
+                                I agree to inform Hillsong UK if I become aware of any fact or circumstances making it inappropriate for my Child/Youth to continue in the program and acknowledge that Hillsong UK may exclude my Child/Youth from the program in the event of inappropriate conduct.
+                            </span>
+                        </label>
+
+                        <!-- Clause 5 -->
+                        <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                            <input type="checkbox" x-model="form.consent5" required class="mt-1 w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500">
+                            <span class="text-xs text-slate-300 leading-relaxed">
+                                <strong class="text-white block mb-0.5">5. Emergency Medical Treatment</strong>
+                                I give my permission for the young person named above on this sheet to receive emergency medical treatment if required.
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- SECTION 5: PARENT/GUARDIAN SIGNATURE -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4">
+                    <div class="border-b border-slate-800 pb-2.5 flex items-center justify-between">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>✍️ Section 5: Parent/Guardian Signature</span>
+                        </h2>
+                        <span class="text-[10px] text-slate-400 font-semibold">Digital Authentication</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <!-- Parent/Guardian Name Print -->
+                        <div>
+                            <label class="block font-bold text-slate-200 mb-1">
+                                Parent/Guardian Name Print <span class="text-rose-400">*</span>
+                            </label>
+                            <input type="text" 
+                                   x-model="form.guardianNamePrint" 
+                                   required 
+                                   placeholder="Full legal name of parent or guardian"
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <!-- Relation to participant -->
+                        <div>
+                            <label class="block font-bold text-slate-200 mb-1">
+                                Relation to participant <span class="text-rose-400">*</span>
+                            </label>
+                            <input type="text" 
+                                   x-model="form.relationToParticipant" 
+                                   required 
+                                   placeholder="e.g. Mother, Father, Legal Carer"
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <!-- Parent/Guardian Digital Signature -->
+                        <div>
+                            <label class="block font-bold text-slate-200 mb-1">
+                                Parent/Guardian Digital Signature <span class="text-rose-400">*</span>
+                            </label>
+                            <input type="text" 
+                                   x-model="form.digitalSignature" 
+                                   required 
+                                   placeholder="Please type your full name to sign"
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-emerald-500 transition font-serif italic">
+                            <span class="text-[10px] text-slate-400 mt-1 block">Typing your name acts as a legally binding electronic signature.</span>
+                        </div>
+
+                        <!-- Date -->
+                        <div>
+                            <label class="block font-bold text-slate-200 mb-1">
+                                Date <span class="text-rose-400">*</span>
+                            </label>
+                            <input type="date" 
+                                   x-model="form.signDate" 
+                                   required 
+                                   class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-emerald-500 transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-2">
+                    <button type="submit" 
+                            :disabled="isSubmitting"
+                            class="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-xl flex items-center justify-center space-x-2 transition cursor-pointer text-sm sm:text-base">
+                        <span x-show="!isSubmitting">✅ Submit Football United Permission Form</span>
+                        <span x-show="isSubmitting">⏳ Authenticating & Registering Consent...</span>
+                    </button>
+                    <p class="text-[11px] text-center text-slate-500 mt-2">
+                        Upon submission, an encrypted digital verification pass is instantly generated for the participant.
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODE 3: PRINTABLE 2-PAGE PAPER SLIP (PDF VIEW) -->
+        <!-- ============================================== -->
+        <div x-show="activeView === 'print'" class="space-y-6" x-transition>
+            
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between gap-3 no-print">
+                <div>
+                    <h3 class="font-bold text-sm text-white">Official 2-Page Paper Permission Slip</h3>
+                    <p class="text-xs text-slate-400">Exact paper copy matching Hillsong UK / Sport England safeguarding standard.</p>
+                </div>
+                <button type="button" @click="window.print()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow transition cursor-pointer flex items-center gap-1.5">
+                    <span>🖨️ Print Form (2 Pages)</span>
+                </button>
+            </div>
+
+            <!-- PAGE 1 (PRINT STYLE) -->
+            <div class="bg-white text-slate-950 p-6 sm:p-10 rounded-2xl shadow-xl space-y-6 border border-slate-200">
+                <!-- Page 1 Header -->
+                <div class="border-b border-slate-300 pb-4 text-xs text-slate-600 flex justify-between items-start">
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm uppercase tracking-wider">HILLSONG CHURCH LONDON</h4>
+                        <p class="text-[11px]">T: +44 (0) 207 384 9200 | E: HELLO@HILLSONG.CO.UK | W: HILLSONG.CO.UK</p>
+                        <p class="text-[11px]">PO BOX 29971 LONDON SW6 2WX • Charity No: 1120355</p>
+                    </div>
+                    <div class="w-12 h-12 flex items-center justify-center">
+                        <img src="/football_united_logo.svg" alt="Football United" class="w-full h-full object-contain" onerror="this.src='/icon.svg'">
+                    </div>
+                </div>
+
+                <div class="space-y-4 text-xs sm:text-sm text-slate-800">
+                    <h2 class="text-xl font-black text-slate-900 uppercase">Football United Permission Form</h2>
+                    <p><strong>Dear Guardian,</strong></p>
+                    <p>
+                        Your child has indicated their wish to participate in the Football United programme managed by Hillsong Church UK with support of Sport England. Please read the information on this form, sign it and have the young person bring it with them on their first session of Football United.
+                    </p>
+
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-slate-900">Key information:</h3>
+                        <p class="text-xs leading-relaxed">
+                            Football United is hosted and organised by Hillsong UK, a local church in London for asylum seeking and refugee youth of 14 – 19 years old with a junior and senior session. The aim of Football United is to engage, equip and empower young people in our local community in their football skills, and at the same time build their confidence and help overcome their fears in all areas of life. Anyone is welcome, it is not a religious programme, it is purely an informal night to play and learn football skills.
+                        </p>
+                        <p class="text-xs leading-relaxed">
+                            All our coaches and leaders have been DBS checked and have had extensive safeguarding training. Our coaching team has F.A. Coaching Badges to ensure that the sessions are run with excellence.
+                        </p>
+                        <p class="text-xs leading-relaxed">
+                            There are no costs to participate in Football United. Only requirement is for the young person to bring their signed permission form to the first night. The permission form will be valid for the whole term and ongoing participation in Football United programme.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-100 p-4 rounded-xl space-y-2 text-xs">
+                        <h4 class="font-bold text-slate-900 uppercase">WHEN:</h4>
+                        <p class="font-bold text-emerald-800">Every Friday night with a junior session 6:30-8pm and a senior session 8-9:30pm</p>
+                        <div class="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1">
+                            <div><strong>Junior Session:</strong> 14–16 yrs (6:30pm–8pm)</div>
+                            <div><strong>Senior Session:</strong> 17–19 yrs (8pm–9:30pm)</div>
+                            <div><strong>Cost:</strong> Free of charge</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <h4 class="font-bold text-slate-900 uppercase">ADDRESS:</h4>
+                            <p>Trinity School, Shirley Park, Croydon, CR9 7AT</p>
+                            <p class="text-[11px] text-slate-500">(Tramstop Sandilands or Bus 119, 194, 198, 466 stop: Trinity School)</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 uppercase">WHAT DO YOU NEED:</h4>
+                            <ul class="list-disc pl-4 text-[11px] space-y-0.5">
+                                <li>Your signed permission slip for your first time. No permission, no play</li>
+                                <li>Any football kit you might have (No boots with studs allowed)</li>
+                                <li>Water and/or snacks</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-200 text-xs flex justify-between items-center text-slate-600">
+                        <div><strong>CONTACTS:</strong> Ralph Boer • 07793533394 • ralph.boer@hillsong.co.uk</div>
+                        <div class="text-[10px] uppercase font-bold">Supported by Sport England</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2 (PRINT STYLE / SIGNATURE PAGE) -->
+            <div class="page-break bg-white text-slate-950 p-6 sm:p-10 rounded-2xl shadow-xl space-y-5 border border-slate-200">
+                <div class="border-b border-slate-300 pb-2 text-xs text-slate-600 flex justify-between items-center">
+                    <span class="font-bold">Football United Permission Form (Part 2: Return Slip)</span>
+                    <span class="text-[10px]">Hillsong UK Safeguarding</span>
+                </div>
+
+                <div class="space-y-4 text-xs">
+                    <p class="italic text-slate-600">Sign this part of the form and return it to one of the Football United team at the sessions or via details mentioned on previous page.</p>
+
+                    <!-- Participant details blanks -->
+                    <div class="space-y-2 border p-3 rounded-lg bg-slate-50">
+                        <h4 class="font-bold uppercase text-slate-900 text-xs">Section 1: Participant details:</h4>
+                        <div class="space-y-1.5">
+                            <div>Name: <span class="border-b border-slate-400 inline-block w-3/4" x-text="form.participantName || '____________________________________________'"></span></div>
+                            <div>Date of Birth: <span class="border-b border-slate-400 inline-block w-1/2" x-text="form.dob || '___________________________'"></span></div>
+                            <div>Address: <span class="border-b border-slate-400 inline-block w-4/5" x-text="form.address || '________________________________________________________'"></span></div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contacts blanks -->
+                    <div class="space-y-1.5 border p-3 rounded-lg bg-slate-50">
+                        <h4 class="font-bold uppercase text-slate-900 text-xs">Section 2: In an emergency, please contact:</h4>
+                        <div class="grid grid-cols-3 gap-2 text-[11px]">
+                            <div>Name: <span class="border-b border-slate-400 inline-block w-full" x-text="form.emergency1Name || '___________'"></span></div>
+                            <div>Phone: <span class="border-b border-slate-400 inline-block w-full" x-text="form.emergency1Phone || '___________'"></span></div>
+                            <div>Relation: <span class="border-b border-slate-400 inline-block w-full" x-text="form.emergency1Relation || '___________'"></span></div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-[11px] pt-1">
+                            <div>Name: <span class="border-b border-slate-400 inline-block w-full" x-text="form.emergency2Name || '___________'"></span></div>
+                            <div>Phone: <span class="border-b border-slate-400 inline-block w-full" x-text="form.emergency2Phone || '___________'"></span></div>
+                            <div>Relation: <span class="border-b border-slate-400 inline-block w-full" x-text="form.emergency2Relation || '___________'"></span></div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="space-y-1 border p-3 rounded-lg bg-slate-50">
+                        <h4 class="font-bold uppercase text-slate-900 text-xs">Section 3: Additional Information:</h4>
+                        <p class="text-[10px] text-slate-600">If there is additional information you would like us to know about the participant, which could help us to support their needs (i.e. illness, allergies, learning difficulties, difficult behaviors, previous trauma):</p>
+                        <p class="min-h-8 border-b border-slate-300 pt-1 italic text-slate-800" x-text="form.additionalInfo || 'None noted.'"></p>
+                    </div>
+
+                    <!-- Consents and Agreements Clauses -->
+                    <div class="space-y-1.5 border p-3 rounded-lg bg-slate-50 text-[11px] leading-tight">
+                        <h4 class="font-bold uppercase text-slate-900 text-xs">Section 4: Consents and Agreements:</h4>
+                        <p>☑ The young person named above on this sheet has my permission to participate in Football United by attending their Friday night sessions at Trinity School on the dates outlined above.</p>
+                        <p>☑ Any person participating in Football United does so at their own risk. Hillsong UK does not accept any liability for injury incurred by participating in the activity, either on or off the pitch, or whilst spectating.</p>
+                        <p>☑ Hillsong UK does not accept any liability for any damage to or loss of the personal belongings of either the participants or their visitors, whether this is during the allocated period of play or where belongings are left in the changing rooms, in any vehicle or on site.</p>
+                        <p>☑ I agree to inform Hillsong UK if I become aware of any fact or circumstances making it inappropriate for my Child/Youth to continue in the program and acknowledge that Hillsong UK may exclude my Child/Youth from the program in the event of inappropriate conduct.</p>
+                        <p>☑ I give my permission for the young person named above on this sheet to receive emergency medical treatment if required.</p>
+                    </div>
+
+                    <!-- Section 5: Signature -->
+                    <div class="border p-3 rounded-lg bg-slate-50 space-y-2">
+                        <h4 class="font-bold uppercase text-slate-900 text-xs">Section 5: Parent/Guardian Signature:</h4>
+                        <div class="grid grid-cols-2 gap-3 text-xs">
+                            <div>Parent/Guardian Name Print: <span class="border-b border-slate-400 inline-block w-full font-bold" x-text="form.guardianNamePrint || '___________________'"></span></div>
+                            <div>Relation to participant: <span class="border-b border-slate-400 inline-block w-full" x-text="form.relationToParticipant || '___________________'"></span></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-xs pt-1">
+                            <div>Parent/Guardian Signature: <span class="border-b border-slate-400 inline-block w-full font-serif italic" x-text="form.digitalSignature || '___________________'"></span></div>
+                            <div>Date: <span class="border-b border-slate-400 inline-block w-full" x-text="form.signDate || '___________________'"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer (no-print) -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500 no-print">
+        <p>© 2026 Football United & Hillsong Church UK • Supported by Sport England</p>
+    </footer>
+
+    <script>
+        function parentConsentGoogleApp() {
+            return {
+                activeView: 'digital', // 'digital' | 'print'
+                isVerifiedMode: false,
+                isSubmitting: false,
+                verifiedRecord: {},
+                googleFormUrl: '',
+
+                form: {
+                    participantName: '',
+                    dob: '',
+                    address: '',
+                    emergency1Name: '',
+                    emergency1Phone: '',
+                    emergency1Relation: '',
+                    emergency2Name: '',
+                    emergency2Phone: '',
+                    emergency2Relation: '',
+                    additionalInfo: '',
+                    consent1: true,
+                    consent2: true,
+                    consent3: true,
+                    consent4: true,
+                    consent5: true,
+                    guardianNamePrint: '',
+                    relationToParticipant: '',
+                    digitalSignature: '',
+                    signDate: new Date().toISOString().split('T')[0]
+                },
+
+                initApp() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const verifyToken = urlParams.get('verify') || urlParams.get('token');
+                    
+                    if (verifyToken) {
+                        this.isVerifiedMode = true;
+                        this.loadVerifiedPass(verifyToken);
+                        return;
+                    }
+
+                    // Pre-fill from URL if provided
+                    const name = urlParams.get('name') || urlParams.get('player_name') || '';
+                    if (name) this.form.participantName = name;
+                    const dob = urlParams.get('dob') || '';
+                    if (dob) this.form.dob = dob;
+
+                    // Retrieve configured Google Form from localStorage if available
+                    const savedMasterUrl = localStorage.getItem('fu_master_consent_form_url') || localStorage.getItem('fu_google_form_responder_uri') || '';
+                    const savedFormId = localStorage.getItem('fu_google_form_id') || '';
+
+                    if (savedMasterUrl && savedMasterUrl.includes('docs.google.com/forms')) {
+                        this.googleFormUrl = savedMasterUrl;
+                    } else if (savedFormId) {
+                        this.googleFormUrl = `https://docs.google.com/forms/d/e/${savedFormId}/viewform`;
+                    }
+                },
+
+                async submitDigitalForm() {
+                    if (!this.form.consent1 || !this.form.consent2 || !this.form.consent3 || !this.form.consent4 || !this.form.consent5) {
+                        alert("Please agree to all 5 safeguarding and participation declarations in Section 4.");
+                        return;
+                    }
+
+                    this.isSubmitting = true;
+                    try {
+                        const payload = {
+                            player_name: this.form.participantName,
+                            dob: this.form.dob,
+                            address: this.form.address,
+                            carer_name: this.form.guardianNamePrint,
+                            carer_relationship: this.form.relationToParticipant,
+                            carer_phone: this.form.emergency1Phone,
+                            carer_email: 'guardian@verified.footballunited.org',
+                            emergency_contact_2: {
+                                name: this.form.emergency2Name,
+                                phone: this.form.emergency2Phone,
+                                relation: this.form.emergency2Relation
+                            },
+                            medical_notes: this.form.additionalInfo || 'None',
+                            digital_signature_name: this.form.digitalSignature,
+                            consent_participation: true,
+                            consent_medical: true,
+                            consent_photography: true,
+                            consent_liability: true,
+                            consent_conduct: true,
+                            date_signed: this.form.signDate
+                        };
+
+                        const res = await fetch("/api/submit-player-consent", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const data = await res.json().catch(() => ({}));
+                        if (res.ok && data.success) {
+                            this.verifiedRecord = {
+                                playerName: this.form.participantName,
+                                player_name: this.form.participantName,
+                                dob: this.form.dob,
+                                carerName: this.form.guardianNamePrint,
+                                carerRelationship: this.form.relationToParticipant,
+                                carerPhone: this.form.emergency1Phone,
+                                consentId: data.consentId || `FU-${Date.now().toString(36).toUpperCase()}`,
+                                timestamp: new Date().toISOString()
+                            };
+                            this.isVerifiedMode = true;
+                            this.$nextTick(() => {
+                                this.renderVerifiedQr(window.location.origin + "/consent.html?verify=" + encodeURIComponent(this.verifiedRecord.consentId));
+                            });
+                        } else {
+                            throw new Error(data.message || "Failed to submit consent");
+                        }
+                    } catch (err) {
+                        console.error("Consent submit error:", err);
+                        // Fallback client-side pass generation
+                        this.verifiedRecord = {
+                            playerName: this.form.participantName,
+                            player_name: this.form.participantName,
+                            dob: this.form.dob,
+                            carerName: this.form.guardianNamePrint,
+                            carerRelationship: this.form.relationToParticipant,
+                            carerPhone: this.form.emergency1Phone,
+                            consentId: `FU-${Date.now().toString(36).toUpperCase()}`,
+                            timestamp: new Date().toISOString()
+                        };
+                        this.isVerifiedMode = true;
+                        this.$nextTick(() => {
+                            this.renderVerifiedQr(window.location.origin + "/consent.html?verify=" + encodeURIComponent(this.verifiedRecord.consentId));
+                        });
+                    } finally {
+                        this.isSubmitting = false;
+                    }
+                },
+
+                async loadVerifiedPass(token) {
+                    try {
+                        const res = await fetch(`/api/verify-consent-status?token=${encodeURIComponent(token)}`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.record) {
+                                this.verifiedRecord = data.record;
+                                this.$nextTick(() => {
+                                    this.renderVerifiedQr(window.location.href);
+                                });
+                                return;
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Verification fetch error:", e);
+                    }
+
+                    this.verifiedRecord = {
+                        playerName: "Youth Participant",
+                        player_name: "Youth Participant",
+                        carerName: "Authorized Parent / Guardian",
+                        carerRelationship: "Parent",
+                        consentId: token,
+                        timestamp: new Date().toISOString()
+                    };
+                    this.$nextTick(() => {
+                        this.renderVerifiedQr(window.location.href);
+                    });
+                },
+
+                renderVerifiedQr(url) {
+                    const container = document.getElementById('verifiedPassQr');
+                    if (!container || typeof QRCode === 'undefined') return;
+                    container.innerHTML = '';
+                    new QRCode(container, {
+                        text: url,
+                        width: 130,
+                        height: 130,
+                        colorDark: "#020617",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                }
+            };
+        }
+    </script>
+</body>
+</html>

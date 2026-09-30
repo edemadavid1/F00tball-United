@@ -1,0 +1,10 @@
+{
+  "name": "Football United",
+  "description": "Sports league management, multi-tab Microsoft Excel quarterly weekly attendance tracking, player roster database with digital parent consent portal, automated spreadsheet integration, and FA youth safeguarding verification.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

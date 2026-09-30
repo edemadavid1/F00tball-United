@@ -1,0 +1,68 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="badgeBg" cx="50%" cy="50%" r="50%" fx="40%" fy="40%">
+      <stop offset="0%" stop-color="#22c55e" />
+      <stop offset="60%" stop-color="#15803d" />
+      <stop offset="100%" stop-color="#14532d" />
+    </radialGradient>
+    <linearGradient id="glowRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="50%" stop-color="#166534" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+    <linearGradient id="lightningGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bef264" />
+      <stop offset="100%" stop-color="#22c55e" />
+    </linearGradient>
+    <filter id="logoShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#042f1a" flood-opacity="0.4" />
+    </filter>
+    <filter id="textOuterGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#022c22" flood-opacity="0.8" />
+    </filter>
+    <path id="gameOnArcPath" d="M 34 116 A 66 66 0 0 1 166 116" fill="none" />
+  </defs>
+  <circle cx="100" cy="100" r="88" fill="none" stroke="url(#glowRingGrad)" stroke-width="4" />
+  <circle cx="100" cy="100" r="84" fill="none" stroke="#22c55e" stroke-width="1" opacity="0.6" />
+  <circle cx="100" cy="100" r="82" fill="url(#badgeBg)" filter="url(#logoShadow)" />
+  <circle cx="60" cy="70" r="2" fill="#bef264" opacity="0.8" />
+  <circle cx="78" cy="62" r="1.5" fill="#ffffff" opacity="0.6" />
+  <circle cx="132" cy="72" r="2.5" fill="#bef264" opacity="0.7" />
+  <circle cx="120" cy="84" r="1.5" fill="#ffffff" opacity="0.5" />
+  <circle cx="70" cy="105" r="2" fill="#bef264" opacity="0.5" />
+  <path d="M 30 115 Q 100 90 170 115" fill="none" stroke="#22c55e" stroke-width="1.5" opacity="0.35" />
+  <path d="M 24 135 Q 100 110 176 135" fill="none" stroke="#22c55e" stroke-width="1" opacity="0.25" />
+  <path d="M 35 152 C 45 130, 70 115, 96 118 C 80 124, 60 138, 52 158 Z" fill="#ffffff" opacity="0.9" />
+  <path d="M 42 162 C 55 142, 85 125, 114 130 C 95 136, 72 152, 60 172 Z" fill="#bbf7d0" opacity="0.75" />
+  <path d="M 36 82 Q 40 82 40 78 Q 40 82 44 82 Q 40 82 40 86 Q 40 82 36 82 Z" fill="#ffffff" />
+  <path d="M 164 102 Q 166 102 166 100 Q 166 102 168 102 Q 166 102 166 104 Q 166 102 164 102 Z" fill="#bef264" />
+  <g filter="url(#logoShadow)">
+    <path d="M 144 95 L 168 112 L 154 116 L 174 134 L 142 122 L 150 116 Z" fill="url(#lightningGrad)" />
+    <path d="M 136 128 L 154 140 L 144 143 L 158 156 L 134 146 L 140 142 Z" fill="#bef264" opacity="0.9" />
+  </g>
+  <text font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="21" letter-spacing="1px" fill="#022c22" stroke="#022c22" stroke-width="6" stroke-linejoin="round">
+    <textPath href="#gameOnArcPath" startOffset="50%" text-anchor="middle">GAME ON</textPath>
+  </text>
+  <text font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="21" letter-spacing="1px" fill="#ffffff" stroke="#ffffff" stroke-width="3.5" stroke-linejoin="round">
+    <textPath href="#gameOnArcPath" startOffset="50%" text-anchor="middle">GAME ON</textPath>
+  </text>
+  <text font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="21" letter-spacing="1px" fill="#ffffff" filter="url(#textOuterGlow)">
+    <textPath href="#gameOnArcPath" startOffset="50%" text-anchor="middle">GAME ON</textPath>
+  </text>
+  <g filter="url(#logoShadow)" transform="translate(10, 5)">
+    <circle cx="95" cy="115" r="28" fill="#ffffff" stroke="#052e16" stroke-width="2" />
+    <path d="M 70 100 Q 82 92 98 102" fill="none" stroke="#22c55e" stroke-width="1" opacity="0.4" />
+    <polygon points="95,103 105,110 101,121 89,121 85,110" fill="#052e16" />
+    <line x1="95" y1="103" x2="95" y2="91" stroke="#052e16" stroke-width="2.5" />
+    <line x1="105" y1="110" x2="117" y2="106" stroke="#052e16" stroke-width="2.5" />
+    <line x1="101" y1="121" x2="111" y2="131" stroke="#052e16" stroke-width="2.5" />
+    <line x1="89" y1="121" x2="79" y2="131" stroke="#052e16" stroke-width="2.5" />
+    <line x1="85" y1="110" x2="73" y2="106" stroke="#052e16" stroke-width="2.5" />
+    <polygon points="88,135 102,135 95,143" fill="#052e16" />
+    <line x1="88" y1="135" x2="79" y2="131" stroke="#052e16" stroke-width="2.5" />
+    <line x1="102" y1="135" x2="111" y2="131" stroke="#052e16" stroke-width="2.5" />
+    <polygon points="76,96 85,93 85,102 73,106" fill="#052e16" />
+    <polygon points="114,96 105,93 105,102 117,106" fill="#052e16" />
+    <path d="M 68 110 A 27 27 0 0 1 122 110 A 27 27 0 0 0 68 110 Z" fill="#ffffff" opacity="0.15" />
+  </g>
+</svg>
